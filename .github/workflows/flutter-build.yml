@@ -4,7 +4,7 @@ permissions:
   contents: write
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest # <--- MUST be macos-latest to build iOS!
     steps:
       - uses: actions/checkout@v4
       
@@ -25,13 +25,13 @@ jobs:
           folder: build/web
           branch: gh-pages
           
-      
       - name: Build Android APK
         run: flutter build apk --release
       
-      
-      
-
+      - name: Build iOS IPA (No Codesign)
+        # Needs no-codesign unless you also configure Apple Certificates
+        run: flutter build ipa --release --no-codesign 
+        
       - name: Upload Binaries
         uses: actions/upload-artifact@v4
         with:
