@@ -1,0 +1,41 @@
+name: Flutter Forge Build & Deploy
+on: [push]
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          
+      - name: Install Dependencies
+        run: flutter pub get
+        
+      - name: Build Web
+        run: flutter build web --release --base-href /myfl/
+        
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
+          branch: gh-pages
+          
+      
+      - name: Build Android APK
+        run: flutter build apk --release
+      
+      
+      
+
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-binaries
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/ios/ipa/*.ipa
